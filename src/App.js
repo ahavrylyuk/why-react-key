@@ -1,52 +1,35 @@
 import React, { Component } from 'react';
 import './App.css';
 
-class List extends Component {
-  state = { active: 0 };
-
-  handleClick(active) {
-    this.setState({ active });
-    const { onChange } = this.props;
-    if (onChange) {
-      onChange(active);
-    }
-  }
-
-  componentWillReceiveProps({ items }) {
-    if (items !== this.props.items) {
-      this.setState({ active: 0 });
-    }
-  }
-
-  render() {
-    const { items } = this.props;
-    const { active } = this.state;
-    return (
-      <ul>
-      {items && items.map && items.map((item, i) => (
-        <li key={i} className={i === active ? 'active' : ''} onClick={() => this.handleClick(i)}>{item}</li>
-      ))}
-      </ul>
-    )
-  }
-}
+const List = ({ items, active, onChange = () => null }) => (
+  <ul>
+  {items && items.map && items.map((item, i) => (
+    <li key={i} className={i === active ? 'active' : ''} onClick={() => onChange(i)}>{item}</li>
+  ))}
+  </ul>
+);
 
 class Lists extends Component {
   state = {
-    active: this.props.one[0]
+    activeOne: 0,
+    activeTwo: 0
   };
 
-  handleChange(i) {
-    this.setState({ active: this.props.one[i] });
+  changeOne(i) {
+    this.setState({ activeOne: i, activeTwo: 0 });
+  }
+
+  changeTwo(i) {
+    this.setState({ activeTwo: i });
   }
 
   render() {
     const { one, two } = this.props;
-    const { active } = this.state;
+    const { activeOne, activeTwo } = this.state;
     return (
       <div>
-        <List items={one} onChange={i => this.handleChange(i)} />
-        <List items={two[active]} />
+        <List items={one} active={activeOne} onChange={i => this.changeOne(i)} />
+        <List items={two[one[activeOne]]} active={activeTwo} onChange={i => this.changeTwo(i)} />
       </div>
     )
   }
