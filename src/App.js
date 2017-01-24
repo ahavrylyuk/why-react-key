@@ -12,6 +12,12 @@ class List extends Component {
     }
   }
 
+  componentWillReceiveProps({ items }) {
+    if (items !== this.props.items) {
+      this.setState({ active: 0 });
+    }
+  }
+
   render() {
     const { items } = this.props;
     const { active } = this.state;
@@ -27,20 +33,20 @@ class List extends Component {
 
 class Lists extends Component {
   state = {
-    currentOne: this.props.one[0]
+    active: this.props.one[0]
   };
 
   handleChange(i) {
-    this.setState({ currentOne: this.props.one[i] });
+    this.setState({ active: this.props.one[i] });
   }
 
   render() {
     const { one, two } = this.props;
-    const { currentOne } = this.state;
+    const { active } = this.state;
     return (
       <div>
         <List items={one} onChange={i => this.handleChange(i)} />
-        <List key={two[currentOne]} items={two[currentOne]} />
+        <List items={two[active]} />
       </div>
     )
   }
