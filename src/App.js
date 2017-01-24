@@ -40,7 +40,7 @@ class Lists extends Component {
     return (
       <div>
         <List items={one} onChange={i => this.handleChange(i)} />
-        <List items={two[currentOne]} />
+        <List key={two[currentOne]} items={two[currentOne]} />
       </div>
     )
   }
