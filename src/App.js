@@ -1,39 +1,35 @@
 import React, { Component } from 'react';
+import { withState } from 'recompose';
 import './App.css';
 
-const List = ({ items, active, onChange = () => null }) => (
-  <ul>
-  {items && items.map && items.map((item, i) => (
-    <li key={i} className={i === active ? 'active' : ''} onClick={() => onChange(i)}>{item}</li>
-  ))}
-  </ul>
-);
-
-class Lists extends Component {
-  state = {
-    activeOne: 0,
-    activeTwo: 0
-  };
-
-  changeOne(i) {
-    this.setState({ activeOne: i, activeTwo: 0 });
-  }
-
-  changeTwo(i) {
-    this.setState({ activeTwo: i });
-  }
-
-  render() {
-    const { one, two } = this.props;
-    const { activeOne, activeTwo } = this.state;
+const List = withState('active', 'change', 0)(
+  ({ items = [], active, change, onChange }) => {
+    const handle = (i) => {
+      change(i);
+      if (onChange) onChange(i);
+    }
     return (
-      <div>
-        <List items={one} active={activeOne} onChange={i => this.changeOne(i)} />
-        <List items={two[one[activeOne]]} active={activeTwo} onChange={i => this.changeTwo(i)} />
-      </div>
+      <ul>
+      {items.map((item, i) => (
+        <li
+          key={i}
+          className={i === active ? 'active' : ''}
+          onClick={() => handle(i)}
+        >{item}</li>
+      ))}
+      </ul>
     )
   }
-}
+);
+
+const Lists = withState('active', 'onChange', 0)(
+  ({ one, two, active, onChange }) => (
+    <div>
+      <List items={one} onChange={onChange} />
+      <List key={active} items={two[one[active]]} />
+    </div>
+  )
+);
 
 class App extends Component {
   render() {
@@ -41,7 +37,11 @@ class App extends Component {
       <div className="App">
         <Lists
           one={['US', 'UK', 'UA']}
-          two={{ US: ['New York', 'Washington'], UA: ['Kyiv', 'Lviv']}}
+          two={{
+            US: ['New York', 'Washington'],
+            UK: ['London'],
+            UA: ['Kyiv', 'Lviv']
+          }}
         />
       </div>
     );
